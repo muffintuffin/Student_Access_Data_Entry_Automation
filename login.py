@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from data_processing import process_data, read_excel_data, extract_pdf_data
 from selenium.webdriver.support.ui import Select
-import os
+
 
 # function to log into website
 def login_to_site(browser, username, password):
@@ -117,7 +117,7 @@ def enter_permanent_info(browser, student_info):
     dropdown_certificate_earned = Select(browser.find_element(By.ID, 'ddlDegCertFieldErnd'))
     dropdown_certificate_earned.select_by_value('Has not earned a degree/certificate')
 
-    #clikcs the save button
+    # clicks the save button
     save_button = browser.find_element(By.ID, 'cmdSave')
     save_button.click()
 
@@ -131,9 +131,6 @@ def main():
     browser = webdriver.Firefox()
     login_to_site(browser, username, password)
 
-
-
-
     excel_file = 'Sample Bnumber List.xlsx'
 
     df = read_excel_data(excel_file)
@@ -144,7 +141,6 @@ def main():
         navigate_to_add_student(browser)
         step_one(browser, student_info)
         enter_permanent_info(browser, student_info)
-
 
 
 if __name__ == "__main__":
