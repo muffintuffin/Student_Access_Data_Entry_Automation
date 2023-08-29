@@ -72,7 +72,7 @@ def enter_permanent_info(browser, student_info):
         dropdown_asian.select_by_value('No')
 
     dropdown_black = Select(browser.find_element(By.ID, 'ddlBlackAfrAm'))
-    if 'Black' in race_lower or 'African American' in race_lower:
+    if 'black/african american' in race_lower or 'African American' in race_lower:
         dropdown_black.select_by_value('Yes')
     else:
         dropdown_black.select_by_value('No')
@@ -84,7 +84,7 @@ def enter_permanent_info(browser, student_info):
         dropdown_white.select_by_value('No')
 
     dropdown_pacific = Select(browser.find_element(By.ID, 'ddlHIPacIslndr'))
-    if 'Native Hawaiian' in race_lower or 'Other Pacific Islander' in race_lower:
+    if 'native hawaiian' in race_lower or 'Other Pacific Islander' in race_lower:
         dropdown_pacific.select_by_value('Yes')
     else:
         dropdown_pacific.select_by_value('No')
@@ -133,18 +133,18 @@ def main():
 
 
 
-    """
+
     excel_file = 'Sample Bnumber List.xlsx'
 
     df = read_excel_data(excel_file)
-    pdf_files = ['Sample Data Entry David R.pdf', 'Sample Data Entry Nyx.pdf']
+    pdf_files = ['First Name Test.pdf', 'First Name Test 2.pdf', 'First Name Test 3.pdf']
     student_info_list = process_data(df, pdf_files)
 
     for student_info in student_info_list:
         navigate_to_add_student(browser)
         step_one(browser, student_info)
         enter_permanent_info(browser, student_info)
-    """
+
 
 
 if __name__ == "__main__":
