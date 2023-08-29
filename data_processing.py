@@ -89,7 +89,7 @@ if __name__ == '__main__':  # the following function is a test function that onl
     # Create a dictionary from Excel to easily lookup
     excel_dict = {}
     for index, row in df.iterrows():
-        name = str(row['First Name']) + ' ' + str(row['Last Name'])
+        name = str(row['First Name']) + ' ' + str(row['Middle Name']) + ' ' + str(row['Last Name'])
         excel_dict[name] = {
             'first name': str(row['First Name']),
             'middle name': str(row['Middle Name']),
@@ -100,13 +100,15 @@ if __name__ == '__main__':  # the following function is a test function that onl
     # Match PDF and Excel based on name
     student_info_list = []
     for pdf_participant in pdf_data:
-        name_from_pdf = ''
         if 'name' in pdf_participant:  # Confirm that the 'name' key exists
             name_from_pdf = pdf_participant['name'].strip()
+            name_from_pdf = name_from_pdf.strip().lower()
+
             excel_participant = excel_dict.get(name_from_pdf, {})
 
             print(f"Name from PDF: {name_from_pdf}")
             print(f"Excel Participant: {excel_participant}")
+            print(f"Excel Dict Sample: {list(excel_dict.keys())[:5]}")
 
             if not excel_participant:  # If name didn't match, let's look for the next line
                 for i, (key, value) in enumerate(excel_dict.items()):
