@@ -17,13 +17,15 @@ def extract_excel_data(excel_file):
     df = read_excel_data(excel_file)
     excel_dict = {}
     for index, row in df.iterrows():
-        information = (str(row['First Name'])).lower().strip()
-        excel_dict[information] = {
+
+        composite_key = (str(row['First Name']).strip() + " " + str(row['Last Name'])).lower().strip()
+        excel_dict[composite_key] = {
             'first name': str(row['First Name']),
             'middle name': str(row['Middle Name']),
             'last name': str(row['Last Name']),
             'bnumber': str(row['B Number']),
         }
+
     return excel_dict
 #print(extract_excel_data('Sample Bnumber List.xlsx'))
 
@@ -45,7 +47,9 @@ def extract_pdf_data(pdf_files):
         if name_index is not None and name_index + 2 < len(lines):
             full_name = lines[name_index + 2].strip()
             first_name = full_name.split(' ')[0]  # only gets the first word of the name
-            participant['name'] = first_name.lower().strip()
+            last_name = full_name.split(' ')[-1]
+            composite_key = (first_name.strip() + " " + last_name).lower().strip()
+            participant['composite_key'] = composite_key
 
         gender_indices = [i for i, line in enumerate(lines) if 'Gender' in line]
         gender_index = gender_indices[0] if gender_indices else None
@@ -79,7 +83,8 @@ def match_data(pdf_data, excel_dict):
     combined_data = []
     for pdf_participant in pdf_data:
         # tries to find a match in the Excel dictionary
-        excel_participant = excel_dict.get(pdf_participant.get('name', '').lower())
+        excel_participant = excel_dict.get(pdf_participant.get('composite_key', '').lower())
+        print(f"Trying to match: {pdf_participant.get('composite_key', '').lower()}")
         if excel_participant:
             #combines dictionaries
             combined_info = {**excel_participant, **pdf_participant}
@@ -120,6 +125,8 @@ def match_data(pdf_data, excel_dict):
 
 if __name__ == "__main__":
     excel_data = extract_excel_data('Sample Bnumber List.xlsx')
+    print("Excel Data: ", excel_data)
     pdf_data = extract_pdf_data(glob.glob("PDF Files/*.pdf"))
+    print("PDF Data: ", pdf_data)
     combined_data = match_data(pdf_data, excel_data)
     print("Combined Data: ", combined_data)
