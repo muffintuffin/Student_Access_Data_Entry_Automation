@@ -1,9 +1,13 @@
-# Purpose: To login to the Berea SSS website navigate around the page
-import pandas as pd
+##
+# Purpose: Script to automate entering data into studentaccess.com
+# Author: David Reynoso
+# Date: 2019-07-15
+##
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from data_processing import process_data, read_excel_data, extract_pdf_data
+from data_processing import match_data, read_excel_data, extract_pdf_data
 from selenium.webdriver.support.ui import Select
+import glob
 
 
 # function to log into website
@@ -29,7 +33,7 @@ def navigate_to_add_student(browser):
     add_student.click()
 
 
-# enters in student information into text boxes
+# enters in student information into the add student page
 def step_one(browser, student_info):
     first_name_field = browser.find_element(By.ID, 'txtFirstName')
     first_name_field.send_keys(student_info['first name'])
@@ -39,14 +43,14 @@ def step_one(browser, student_info):
     last_name_field.send_keys(student_info['last name'])
     bnumber_field = browser.find_element(By.ID, 'txtSID')
     bnumber_field.clear()
-    bnumber_field.send_keys(student_info['bnumber'])
+    bnumber_field.send_keys(student_info['B Number'])
     save_and_edit_button = browser.find_element(By.ID, 'InsertButton')
     save_and_edit_button.click()
 
 
 # enters in permanent information into text boxes
 def enter_permanent_info(browser, student_info):
-    DOB_field = browser.find_element(By.ID, 'txtDOB')
+    DOB_field = browser.find_element(By.ID, 'txtDOB') # finds date of birth field
     DOB_field.send_keys(student_info['Date of Birth'])  # format: mm/dd/yyyy
 
     race_lower = student_info['Race'].lower()
@@ -88,22 +92,23 @@ def enter_permanent_info(browser, student_info):
         dropdown_pacific.select_by_value('Yes')
     else:
         dropdown_pacific.select_by_value('No')
+
     # selects the cohort, update it to match the current year's cohort.
     dropdown_cohort = Select(browser.find_element(By.ID, 'ddlCohort'))
-    dropdown_cohort.select_by_value('2023-2024')
+    dropdown_cohort.select_by_value('2023-2024') # update this value to match the current year's cohort
 
     dropdown_iel = Select(browser.find_element(By.ID, 'ddlInstEntryGradeLevel'))
     dropdown_iel.select_by_value('1st yr., never attended')
     # inserts in the date the student entered the program into Insitutional Entry Date, update as needed.
     ied_field = browser.find_element(By.ID, 'txtInstDate')
-    ied_field.send_keys('08/23/2023')
+    ied_field.send_keys('08/23/2023') # update this value to match institution date
 
     dropdown_iel = Select(browser.find_element(By.ID, 'ddlFirstServEnrollCD'))
     dropdown_iel.select_by_value('Full-time (at least 24 credit hours or 36 clock hours in an academic year)')
 
     # inserts in the date the student entered the program into First Service Date, update as needed.
     entry_date_field = browser.find_element(By.ID, 'txtEntryDate')
-    entry_date_field.send_keys('08/21/2023')
+    entry_date_field.send_keys('08/21/2023') # update this value to match program entry date
 
     dropdown_last_service_date = Select(browser.find_element(By.ID, 'ddlAltLastServDate'))
     dropdown_last_service_date.select_by_value('88888888')
@@ -124,18 +129,20 @@ def enter_permanent_info(browser, student_info):
 
 def main():
     # Inserts username and password
-    username = "reynosod"
-    password = "dpassword1!"
+    username = "reynosod" # update this to match your username
+    password = "dpassword1!" # update this to match your password
 
     # Opens up Browser and logs into website
     browser = webdriver.Firefox()
     login_to_site(browser, username, password)
 
-    excel_file = 'Sample Bnumber List.xlsx'
+    excel_file = 'Sample Bnumber List.xlsx' # name of excel file, if entering a different excel file, update this.
 
-    df = read_excel_data(excel_file)
-    pdf_files = ['First Name Test.pdf', 'First Name Test 2.pdf', 'First Name Test 3.pdf']
-    student_info_list = process_data(df, pdf_files)
+    excel_dict = read_excel_data(excel_file)
+    print("Excel Data: ", excel_dict)
+    pdf_data = extract_pdf_data(glob.glob("PDF Files/*.pdf")) # Name of folder containing PDFs, if entering in a different folder, update this.
+    print("PDF Data:", pdf_data)
+    student_info_list = match_data(pdf_data, excel_dict)
 
     for student_info in student_info_list:
         navigate_to_add_student(browser)
