@@ -50,7 +50,7 @@ def step_one(browser, student_info):
 
 # enters in permanent information into text boxes
 def enter_permanent_info(browser, student_info):
-    DOB_field = browser.find_element(By.ID, 'txtDOB') # finds date of birth field
+    DOB_field = browser.find_element(By.ID, 'txtDOB')  # finds date of birth field
     DOB_field.send_keys(student_info['Date of Birth'])  # format: mm/dd/yyyy
 
     race_lower = student_info['Race'].lower()
@@ -95,20 +95,20 @@ def enter_permanent_info(browser, student_info):
 
     # selects the cohort, update it to match the current year's cohort.
     dropdown_cohort = Select(browser.find_element(By.ID, 'ddlCohort'))
-    dropdown_cohort.select_by_value('2023-2024') # update this value to match the current year's cohort
+    dropdown_cohort.select_by_value('2023-2024')  # TODO: update this value to match the current year's cohort
 
     dropdown_iel = Select(browser.find_element(By.ID, 'ddlInstEntryGradeLevel'))
     dropdown_iel.select_by_value('1st yr., never attended')
     # inserts in the date the student entered the program into Insitutional Entry Date, update as needed.
     ied_field = browser.find_element(By.ID, 'txtInstDate')
-    ied_field.send_keys('08/23/2023') # update this value to match institution date
+    ied_field.send_keys('08/23/2023')  # TODO: update this value to match institution date
 
     dropdown_iel = Select(browser.find_element(By.ID, 'ddlFirstServEnrollCD'))
     dropdown_iel.select_by_value('Full-time (at least 24 credit hours or 36 clock hours in an academic year)')
 
     # inserts in the date the student entered the program into First Service Date, update as needed.
     entry_date_field = browser.find_element(By.ID, 'txtEntryDate')
-    entry_date_field.send_keys('08/21/2023') # update this value to match program entry date
+    entry_date_field.send_keys('08/21/2023')  # TODO: update this value to match program entry date
 
     dropdown_last_service_date = Select(browser.find_element(By.ID, 'ddlAltLastServDate'))
     dropdown_last_service_date.select_by_value('88888888')
@@ -129,18 +129,19 @@ def enter_permanent_info(browser, student_info):
 
 def main():
     # Inserts username and password
-    username = "reynosod" # update this to match your username
-    password = "dpassword1!" # update this to match your password
+    username = "reynosod"  # TODO: update this to match your username
+    password = "dpassword1!"  # TODO: update this to match your password
 
     # Opens up Browser and logs into website
     browser = webdriver.Firefox()
     login_to_site(browser, username, password)
 
-    excel_file = 'Sample Bnumber List.xlsx' # name of excel file, if entering a different excel file, update this.
+    excel_file = 'Sample Bnumber List.xlsx'  # name of excel file, if entering a different excel file, update this.
 
     excel_dict = read_excel_data(excel_file)
     print("Excel Data: ", excel_dict)
-    pdf_data = extract_pdf_data(glob.glob("PDF Files/*.pdf")) # Name of folder containing PDFs, if entering in a different folder, update this.
+    pdf_data = extract_pdf_data(
+        glob.glob("PDF Files/*.pdf"))  # Name of folder containing PDFs, if entering in a different folder, update this.
     print("PDF Data:", pdf_data)
     student_info_list = match_data(pdf_data, excel_dict)
 
